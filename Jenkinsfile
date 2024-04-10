@@ -1,27 +1,16 @@
 pipeline {
 	agent any 	
 	stages {
-		stage('Checkout') {
+		
+		stage('git') {
+    
 			steps {
-				echo 'Checkout completed'
+				git credentialsId: 'git_credentials', url:'https://github.com/sindhukampli/java-example.git'
 			}
 		}
-		stage('Static-test') {
+		stage('build') {
 			steps {
-				echo 'Running static tests on code'
-			}
-		}
-		stage('Build') {
-      when {
-        branch "master"
-      }
-			steps {
-				sh 'echo "Building the code"'
-			}
-		}
-		stage('Deploy') {
-			steps {
-				echo 'Deploying into environment'
+				sh "mvn clean install"
 			}
 		}
 	}
