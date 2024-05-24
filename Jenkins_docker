@@ -1,56 +1,47 @@
 pipeline {
     agent any
     environment {
- AWS_ACCOUNT_ID = "654654623396"
+        AWS_ACCOUNT_ID = "654654623396"
         AWS_DEFAULT_REGION = "ap-south-1"
-        IMAGE_REPO_NAME = "jenkins-docker
-IMAGE_TAG="latest"
- REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
-
+        IMAGE_REPO_NAME = "jenkins-docker"
+        IMAGE_TAG = "latest"
+        REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
     }
     stages {
- stage('Logging into AWS ECR') {
- steps {
- script {
- sh "aws ecr get-login-password - region ${AWS_DEFAULT_REGION} | docker login - username AWS - password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
- }
- 
- }
- }
+        stage('Logging into AWS ECR') {
+            steps {
+                script {
+                    sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+                }
+            }
+        }
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/sindhukampli/java-example'
             }
         }
-        
         stage('Build') {
             steps {
                 script {
-              docker build -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${BUILD_NUMBER}
+                    sh "docker build -t ${REPOSITORY_URI}:${IMAGE_TAG} -f Dockerfile ."
                 }
             }
         }
- 
-        
-         stage('Push to ECR') {
+        stage('Push to ECR') {
             steps {
                 script {
-                  sh "docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:$IMAGE_TAG"
- sh "docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${IMAGE_TAG}"
+                    sh "docker push ${REPOSITORY_URI}:${IMAGE_TAG}"
                 }
             }
         }
-        
         stage('Deploy') {
             steps {
                 script {
-                    // Run the Docker container
-                     sh 'docker run -itd -p 9080:8080 ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${BUILD_NUMBER}'
+                    sh "docker run -itd -p 9080:8080 ${REPOSITORY_URI}:${IMAGE_TAG}"
                 }
             }
         }
     }
-    
     post {
         success {
             echo 'Pipeline completed successfully!'
