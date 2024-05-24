@@ -1,19 +1,13 @@
-FROM alpine:3.7
+FROM maven:amazoncorretto as builder
 
-WORKDIR /usr/apps/hello-docker/
+WORKDIR /app
 
-RUN apk add --update bash
+COPY . .
 
-#RUN apk add nodejs
+RUN mvn clean install
 
-RUN apk add --update nodejs nodejs-npm
+FROM artisantek/tomcat:1
 
-#RUN ln -s /usr/bin/nodejs /usr/bin/node
+COPY --from=builder /app/target/*.war /usr/local/tomcat/webapps
 
-RUN npm install -g http-server
-
-ADD . /usr/apps/hello-docker/
-
-ADD index.html /usr/apps/hello-docker/index.html
-
-CMD ["http-server", "-s"]
+CMD ["catalina.sh", "run"]
