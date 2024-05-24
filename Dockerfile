@@ -1,13 +1,27 @@
-FROM maven:amazoncorretto as builder
+# Use an official Maven image with JDK 17
+FROM maven:3.8.5-openjdk-17 AS build
 
+# Set the working directory
 WORKDIR /app
 
-COPY . .
+# Copy the pom.xml and source code into the image
+COPY pom.xml .
+COPY src ./src
 
+# Run Maven clean install
 RUN mvn clean install
 
-FROM artisantek/tomcat:1
+# Use an official JDK 17 runtime image for running the application
+FROM openjdk:17-jdk-slim
 
-COPY --from=builder /app/target/*.war /usr/local/tomcat/webapps
+# Set the working directory
+WORKDIR /app
 
-CMD ["catalina.sh", "run"]
+# Copy the built artifacts from the build stage
+COPY --from=build /app/target/*.jar ./app.jar
+
+# Expose the port the application runs on
+EXPOSE 8080
+
+# Define the entry point for the container
+ENTRYPOINT ["java", "-jar", "app.jar"]
