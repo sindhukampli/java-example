@@ -1,7 +1,13 @@
-FROM tomcat:9.0.80-jdk21-openjdk-slim-bullseye
+FROM maven:amazoncorretto as builder
 
-COPY ./target/*.war /usr/local/tomcat/webapps/
+WORKDIR /app
 
-EXPOSE 8080
+COPY . .
+
+RUN mvn clean install
+
+FROM artisantek/tomcat:1
+
+COPY --from=builder /app/target/*.war /usr/local/tomcat/webapps
 
 CMD ["catalina.sh", "run"]
