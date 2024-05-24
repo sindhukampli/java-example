@@ -37,7 +37,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sh "docker run -itd -p 9020:8080 ${REPOSITORY_URI}:${IMAGE_TAG}"
+                    sh "docker run -itd -p 9060:8080 ${REPOSITORY_URI}:${IMAGE_TAG}"
                 }
             }
         }
