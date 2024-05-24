@@ -9,7 +9,7 @@ COPY pom.xml .
 COPY src ./src
 
 # Run Maven clean install
-RUN mvn clean install
+RUN mvn clean package
 
 # Use an official JDK 17 runtime image for running the application
 FROM openjdk:17-jdk-slim
