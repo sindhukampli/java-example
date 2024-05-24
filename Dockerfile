@@ -1,4 +1,4 @@
-FROM amazoncorretto as builder
+FROM maven:amazoncorretto as builder
 
 WORKDIR /app
 
