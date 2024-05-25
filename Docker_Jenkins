@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        label 'docker-agent'
+    }
     environment {
         ACCOUNT_ID = "654654623396"
         REGION = "ap-south-1"
