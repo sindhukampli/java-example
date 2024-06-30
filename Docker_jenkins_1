@@ -17,7 +17,6 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    // Build Docker image
                     sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
                 }
             }
@@ -26,7 +25,6 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    // Login to Docker Hub using withCredentials block
                     withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS}", passwordVariable: 'Password', usernameVariable: 'Username')]) {
                         sh "docker login -u ${Username} -p ${Password}"
                         sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${Username}/${IMAGE_NAME}:${IMAGE_TAG}"
@@ -39,7 +37,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sh "docker run -d -p 9010:8080 ${Username}/${IMAGE_NAME}:${IMAGE_TAG}"
+                    sh "docker run -d -p 8010:8080 ${Username}/${IMAGE_NAME}:${IMAGE_TAG}"
                 }
             }
         }
