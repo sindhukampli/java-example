@@ -9,9 +9,6 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            agent {
-                label 'docker'
-            }
             steps {
                 git branch: 'main', url: 'https://github.com/sindhukampli/java-example.git'
             }
@@ -19,7 +16,7 @@ pipeline {
 
         stage('Build and Push Docker Image') {
             agent {
-                label 'dockeragent'
+                label 'docker'
             }
             steps {
                 script {
