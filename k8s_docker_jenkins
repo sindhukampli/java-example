@@ -5,7 +5,7 @@ pipeline {
         IMAGE_NAME = "docker1-jenkins"
         IMAGE_TAG = "latest"
         DOCKERHUB_CREDENTIALS = 'Docker-Jenkins'
-KUBECTL_PATH = "/snap/microk8s/6809
+KUBECTL_PATH = "/snap/microk8s/6809"
 
     }
     stages {
