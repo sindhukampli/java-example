@@ -1,0 +1,59 @@
+pipeline {
+    agent none
+
+    environment {
+        DOCKERHUB_CREDENTIALS = 'Docker-Jenkins'
+        IMAGE_NAME = "docker1-jenkins"
+        IMAGE_TAG = "latest"
+    }
+
+    stages {
+        stage('Checkout') {
+            agent {
+                label 'docker'
+            }
+            steps {
+                git branch: 'main', url: 'https://github.com/sindhukampli/java-example.git'
+            }
+        }
+
+        stage('Build and Push Docker Image') {
+            agent {
+                label 'dockeragent'
+            }
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS}", passwordVariable: 'Password', usernameVariable: 'Username')]) {
+                        sh "docker login -u ${Username} -p ${Password}"
+                        sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                        sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${Username}/${IMAGE_NAME}:${IMAGE_TAG}"
+                        sh "docker push ${Username}/${IMAGE_NAME}:${IMAGE_TAG}"
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            agent {
+                label 'k8s'
+            }
+            steps {
+                script {
+  
+                    sh "kubectl apply -f deployment.yaml"
+
+                    sh "kubectl apply -f service.yaml"
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}
