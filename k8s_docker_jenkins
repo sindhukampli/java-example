@@ -5,6 +5,7 @@ pipeline {
         IMAGE_NAME = "docker1-jenkins"
         IMAGE_TAG = "latest"
         DOCKERHUB_CREDENTIALS = 'Docker-Jenkins'
+KUBECTL_PATH = "/snap/microk8s/6809
 
     }
     stages {
@@ -37,10 +38,12 @@ pipeline {
             agent {
                 label 'k8s'
             }
+environment {
+                PATH = "${KUBECTL_PATH}:${env.PATH}"  
+            }
             steps {
                 script {
-  sh "pwd"
-            sh "ls -l"
+ 
   
                     sh "kubectl apply -f deployment.yaml"
 
