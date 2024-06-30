@@ -1,16 +1,15 @@
 pipeline {
     agent none
 
-    environment {
-        DOCKERHUB_CREDENTIALS = 'Docker-Jenkins'
+     environment {
         IMAGE_NAME = "docker1-jenkins"
         IMAGE_TAG = "latest"
+        DOCKERHUB_CREDENTIALS = 'Docker-Jenkins'
     }
-
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/sindhukampli/java-example.git'
+                git branch: 'main', url: 'https://github.com/sindhukampli/java-example'
             }
         }
 
