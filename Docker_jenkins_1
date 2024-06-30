@@ -37,7 +37,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sh "docker run -d -p 8010:8080 ${Username}/${IMAGE_NAME}:${IMAGE_TAG}"
+                    sh "docker run -itd -p 8020:8080 ${Username}/${IMAGE_NAME}:${IMAGE_TAG}"
                 }
             }
         }
