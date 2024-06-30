@@ -1,19 +1,16 @@
 pipeline {
     agent any
-
     environment {
         IMAGE_NAME = "docker1-jenkins"
         IMAGE_TAG = "latest"
         DOCKERHUB_CREDENTIALS = 'Docker-Jenkins'
     }
-
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/sindhukampli/java-example'
             }
         }
-
         stage('Build') {
             steps {
                 script {
@@ -21,7 +18,6 @@ pipeline {
                 }
             }
         }
-
         stage('Push to Docker Hub') {
             steps {
                 script {
@@ -33,7 +29,6 @@ pipeline {
                 }
             }
         }
-
         stage('Deploy') {
             steps {
                 script {
@@ -42,7 +37,6 @@ pipeline {
             }
         }
     }
-
     post {
         success {
             echo 'Pipeline completed successfully!'
