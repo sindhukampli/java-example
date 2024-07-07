@@ -1,51 +1,37 @@
 pipeline {
-    agent none
+    agent any  
 
-     environment {
+    environment {
         IMAGE_NAME = "docker1-jenkins"
         IMAGE_TAG = "latest"
         DOCKERHUB_CREDENTIALS = 'Docker-Jenkins'
-
     }
+
     stages {
         stage('Checkout') {
-   agent {
-                label 'any'
-            }
             steps {
                 git branch: 'main', url: 'https://github.com/sindhukampli/java-example'
             }
         }
 
         stage('Build and Push Docker Image') {
-            agent {
-                label 'any'
-            }
             steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS}", passwordVariable: 'Password', usernameVariable: 'Username')]) {
-                        sh "docker login -u ${Username} -p ${Password}"
-                        sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
-                        sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${Username}/${IMAGE_NAME}:${IMAGE_TAG}"
-                        sh "docker push ${Username}/${IMAGE_NAME}:${IMAGE_TAG}"
-                    }
+                withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS}", passwordVariable: 'Password', usernameVariable: 'Username')]) {
+                    sh "docker login -u ${Username} -p ${Password}"
+                    sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                    sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${Username}/${IMAGE_NAME}:${IMAGE_TAG}"
+                    sh "docker push ${Username}/${IMAGE_NAME}:${IMAGE_TAG}"
                 }
             }
         }
 
         stage('Deploy to Kubernetes') {
             agent {
-                label 'k8s'
+                label 'k8s' 
             }
-
             steps {
-                script {
- 
-  
-                    sh "microk8s kubectl apply -f deployment.yaml"
-
-                    sh "microk8s kubectl apply -f service.yaml"
-                }
+                sh "microk8s kubectl apply -f deployment.yaml"
+                sh "microk8s kubectl apply -f service.yaml"
             }
         }
     }
