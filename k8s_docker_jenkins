@@ -19,7 +19,7 @@ pipeline {
 
         stage('Build and Push Docker Image') {
             agent {
-                label 'docker'
+                label 'any'
             }
             steps {
                 script {
@@ -41,10 +41,10 @@ pipeline {
             steps {
                 script {
  
-  sh "kubectl version --client"
-                    sh "kubectl apply -f deployment.yaml"
+  
+                    sh "microk8s kubectl apply -f deployment.yaml"
 
-                    sh "kubectl apply -f service.yaml"
+                    sh "microk8s kubectl apply -f service.yaml"
                 }
             }
         }
