@@ -1,19 +1,16 @@
 pipeline {
     agent any  
-
     environment {
         IMAGE_NAME = "docker-jenkins-k8s"
         IMAGE_TAG = "latest"
         DOCKERHUB_CREDENTIALS = 'Docker-Jenkins'
     }
-
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/sindhukampli/java-example'
             }
         }
-
         stage('Build and Push Docker Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS}", passwordVariable: 'Password', usernameVariable: 'Username')]) {
@@ -24,7 +21,6 @@ pipeline {
                 }
             }
         }
-
         stage('Deploy to Kubernetes') {
             agent {
                 label 'k8s' 
@@ -35,7 +31,6 @@ pipeline {
             }
         }
     }
-
     post {
         success {
             echo 'Pipeline completed successfully!'
