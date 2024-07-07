@@ -2,7 +2,7 @@ pipeline {
     agent any  
 
     environment {
-        IMAGE_NAME = "docker1-jenkins"
+        IMAGE_NAME = "docker-jenkins-k8s"
         IMAGE_TAG = "latest"
         DOCKERHUB_CREDENTIALS = 'Docker-Jenkins'
     }
