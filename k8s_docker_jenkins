@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Checkout') {
    agent {
-                label 'docker'
+                label 'any'
             }
             steps {
                 git branch: 'main', url: 'https://github.com/sindhukampli/java-example'
