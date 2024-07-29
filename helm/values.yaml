@@ -1,7 +1,7 @@
 serviceA:
   replicaCount: 2
   image:
-    repository: <your-ecr-repo>/service-a
+    repository: 654654623396.dkr.ecr.ap-south-1.amazonaws.com/service-a
     tag: latest
   service:
     type: ClusterIP
