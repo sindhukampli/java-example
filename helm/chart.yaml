@@ -1,0 +1,4 @@
+apiVersion: v2
+name: microservices
+description: A Helm chart for deploying multiple microservices
+version: 0.1.0
