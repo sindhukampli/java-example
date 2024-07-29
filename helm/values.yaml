@@ -1,0 +1,9 @@
+serviceA:
+  replicaCount: 2
+  image:
+    repository: <your-ecr-repo>/service-a
+    tag: latest
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3000
